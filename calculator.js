@@ -1,61 +1,86 @@
 let runningTotal = 0;
 let buffer = "0";
-let previousOperator;
-
+let previousOperator = null;
 const screen = document.querySelector(".screen");
 
 function buttonClick(value) {
-  if (isNaN(value) === "number") {
+  if (isNaN(parseInt(value))) {
     handleSymbol(value);
   } else {
     handleNumber(value);
   }
-  screen.innerText = buffer;
+  rerender();
 }
 
-function handleSymbol(symbol) {
-  //   if (symbol === "C") {
-  //     buffer = "0";
-  //     runningTotal = 0;
-  //   }
-  switch (value) {
-    case "C":
-      buffer = "0";
-      runningTotal = 0;
-      break;
-    case "&plus":
-      handleMath(symbol);
-      break;
-    case "&divide":
-      handleMath(symbol);
-      break;
-    case "&times":
-      handleMath(symbol);
-      break;
-    case "&minus":
-      handleMath(symbol);
-      break;
+function handleNumber(value) {
+  if (buffer === "0") {
+    buffer = value;
+  } else {
+    buffer += value;
   }
 }
-function handleMath(symbol) {
+
+function handleMath(value) {
   if (buffer === "0") {
     return;
   }
+
   const intBuffer = parseInt(buffer);
   if (runningTotal === 0) {
     runningTotal = intBuffer;
   } else {
     flushOperation(intBuffer);
   }
-  previousOperator = symbol;
+
+  previousOperator = value;
   buffer = "0";
 }
-function handleNumber(numberString) {
-  if (buffer === "0") {
-    buffer = numberString;
+
+function flushOperation(intBuffer) {
+  if (previousOperator === "+") {
+    runningTotal += intBuffer;
+  } else if (previousOperator === "−") {
+    runningTotal -= intBuffer;
+  } else if (previousOperator === "×") {
+    runningTotal *= intBuffer;
   } else {
-    buffer += numberString;
+    runningTotal /= intBuffer;
   }
+}
+
+function handleSymbol(value) {
+  switch (value) {
+    case "C":
+      buffer = "0";
+      runningTotal = 0;
+      break;
+    case "=":
+      if (previousOperator === null) {
+        return;
+      }
+      flushOperation(parseInt(buffer));
+      previousOperator = null;
+      buffer = +runningTotal;
+      runningTotal = 0;
+      break;
+    case "←":
+      if (buffer.length === 1) {
+        buffer = "0";
+      } else {
+        buffer = buffer.substring(0, buffer.length - 1);
+      }
+      break;
+    case "+":
+    case "−":
+    case "×":
+    case "÷":
+      handleMath(value);
+      break;
+  }
+}
+
+function rerender() {
+  screen.innerText = buffer;
 }
 
 function init() {
