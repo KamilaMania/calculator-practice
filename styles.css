@@ -10,7 +10,7 @@ body {
   padding: 0;
   margin: 0;
 }
-.wrapper {
+.calc {
   width: 400px;
   border: 3px solid gray;
   background-color: black;
@@ -42,7 +42,7 @@ body {
   flex-basis: 49.9%;
 }
 .triple {
-  flex-basis: 76%;
+  flex-basis: 74.7%;
 }
 .calc-button:last-child {
   background-color: cadetblue;
